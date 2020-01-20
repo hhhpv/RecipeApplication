@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <style>
+        .card {
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            max-width: 300px;
+            margin: auto;
+            text-align: center;
+            font-family: arial;
+        }
+
+        .title {
+            color: grey;
+            font-size: 18px;
+        }
+
+        button {
+            border: none;
+            outline: 0;
+            display: inline-block;
+            padding: 8px;
+            color: white;
+            background-color: #000;
+            text-align: center;
+            cursor: pointer;
+            width: 100%;
+            font-size: 18px;
+        }
+
+        a {
+            text-decoration: none;
+            font-size: 22px;
+            color: black;
+        }
+
+        button:hover,
+        a:hover {
+            opacity: 0.7;
+        }
+
+        .input:focus {
+            height: 300px;
+        }
+
+        .input {
+            width: 500px;
+            height: 200px;
+        }
+
+        #snackbar {
+            visibility: hidden;
+            /* Hidden by default. Visible on click */
+            min-width: 250px;
+            /* Set a default minimum width */
+            margin-left: -125px;
+            /* Divide value of min-width by 2 */
+            background-color: #333;
+            /* Black background color */
+            color: #fff;
+            /* White text color */
+            text-align: center;
+            /* Centered text */
+            border-radius: 2px;
+            /* Rounded borders */
+            padding: 16px;
+            /* Padding */
+            position: fixed;
+            /* Sit on top of the screen */
+            z-index: 1;
+            /* Add a z-index if needed */
+            left: 50%;
+            /* Center the snackbar */
+            bottom: 30px;
+            /* 30px from the bottom */
+        }
+
+        /* Show the snackbar when clicking on a button (class added with JavaScript) */
+        #snackbar.show {
+            visibility: visible;
+            /* Show the snackbar */
+            /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
+  However, delay the fade out process for 2.5 seconds */
+            -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+
+        /* Animations to fade the snackbar in and out */
+        @-webkit-keyframes fadein {
+            from {
+                bottom: 0;
+                opacity: 0;
+            }
+
+            to {
+                bottom: 30px;
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadein {
+            from {
+                bottom: 0;
+                opacity: 0;
+            }
+
+            to {
+                bottom: 30px;
+                opacity: 1;
+            }
+        }
+
+        @-webkit-keyframes fadeout {
+            from {
+                bottom: 30px;
+                opacity: 1;
+            }
+
+            to {
+                bottom: 0;
+                opacity: 0;
+            }
+        }
+
+        @keyframes fadeout {
+            from {
+                bottom: 30px;
+                opacity: 1;
+            }
+
+            to {
+                bottom: 0;
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body onload='getCookie("recipeusername")''>
+
+
+    <div class="container-fluid">
+        <div class="d-flex justify-content-center" style="margin-top: 50px;">
+            <h1 style="font-family: fantasy; font-size: 50px;">The Recipe App</h1>
+        </div>
+        <div class="d-flex justify-content-center">
+            <p style="font-family: fantasy; font-size:small;">Cook something delicious.</p>
+        </div>
+        <div class="d-flex justify-content-center" style="margin-top: 50px;">
+            <h2 style="font-family: fantasy; font-size: 25px;">About You</h2>
+        </div>
+    </div>
+
+
+    <div class="input-group" style="width: 800px;margin-left: 300px;">
+        <div class="input-group-prepend">
+            <span class="input-group-text" id="" style="width: 125px;">UserName</span>
+        </div>
+        <div id="username" style="margin-left: 25px;"></div>
+    </div>
+    <!-- {{/* <form action="/user_info_update" method="POST"> */}} -->
+
+        <!-- <div class="input-group" style="width: 800px;margin-left: 300px;margin-top: 25px;">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="" style="width: 125px;">First Name</span>
+            </div>
+            <input type=" text" class="form-control" name="fusername" id="FirstName" aria-label="Name"
+                aria-describedby="basic-addon2" style="width: 50px;" />
+        </div> -->
+
+        <!-- <div class="input-group" style="width: 800px;margin-left: 300px;margin-top: 25px;">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="" style="width: 125px;">Last Name</span>
+            </div>
+            <input type=" text" class="form-control" name="lusername" id="LastName" aria-label="Name"
+                aria-describedby="basic-addon2" style="width: 50px;" />
+        </div> -->
+
+
+        <div class="input-group" style="width: 800px;margin-left: 300px;margin-top: 25px;">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="" style="width: 125px;">Location</span>
+            </div>
+            <input type=" text" class="form-control" name="location" id="location" aria-label="Name"
+                aria-describedby="basic-addon2" style="width: 50px;" />
+        </div>
+
+        <!-- <div class="input-group" style="width: 800px;margin-left: 300px;margin-top: 25px;">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="" style="width: 150px;">Facebook Profile</span>
+            </div>
+            <input type=" text" class="form-control" name="location" id="location" aria-label="Name"
+                aria-describedby="basic-addon2" style="width: 50px;" />
+        </div> -->
+
+        <div class="input-group" style="width: 800px;margin-left: 300px;margin-top: 25px;">
+            <div class="input-group-prepend">
+                <span class="input-group-text-area" id="" style="width: 125px;">About You</span>
+            </div>
+            <textarea class="input" id="about" rows="10" cols="10">Some text here</textarea>
+        </div>
+
+        <div class="d-flex justify-content-center">
+            <button onclick="updateInfo()" class="btn btn-secondary"
+                style="width: 125px;float: right;margin-top: 25px;">UPDATE</button>
+        </div>
+        <div class="d-flex justify-content-center" id="snackbar">One or more fields are empty</div>
+    <!-- {{/* </form> */}} -->
+
+
+    <script>
+        function processUser() {
+            var parameters = location.search.substring(1).split("&");
+            var temp = parameters[0].split("=");
+            l = unescape(temp[1]);
+            // temp = parameters[1].split("=");
+            // p = unescape(temp[1]);
+            document.getElementById("UserName").innerHTML = l;
+            // document.getElementById("pass").innerHTML = p;
+        }
+        function getCookie(name) {
+            var value = "; " + document.cookie;
+            var parts = value.split("; " + name + "=");
+            if (parts.length == 2) {
+                document.getElementById("username").innerHTML = parts.pop().split(";").shift();
+            }
+        }
+
+        function myFunction() {
+            // Get the snackbar DIV
+            var x = document.getElementById("snackbar");
+
+            // Add the "show" class to DIV
+            x.className = "show";
+
+            // After 3 seconds, remove the show class from DIV
+            setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
+        }
+
+        function RetrieveCookie(name) {
+            var value = "; " + document.cookie;
+            var parts = value.split("; " + name + "=");
+            if (parts.length == 2) {
+                return parts.pop().split(";").shift();
+            }
+        }
+
+        function updateInfo() {
+            var xmlhttp = new XMLHttpRequest();
+            var url = "http://localhost:8080/user_update";
+            var name = RetrieveCookie("recipeusername");
+            var token = RetrieveCookie("recipetoken");
+            var location = document.getElementById("location").value;
+            var about = document.getElementById("about").value;
+            obj = { "username": name, "token": token, "location": location, "about": about };
+            dbParam = JSON.stringify(obj);
+            xmlhttp.onreadystatechange = function () {
+                if (this.readyState === 4 && this.status === 200) {
+                    var myArr = JSON.parse(this.responseText);
+                    console.log(myArr)
+                    if (myArr.result == "empty") {
+                        myFunction();
+                    } else if (myArr.result == "success") {
+                        window.location.replace("http://localhost:8080/");
+                    }
+                    else {
+                        console.log(myArr.result)
+                    }
+                }
+            }
+            xmlhttp.open("POST", url, true);
+            xmlhttp.setRequestHeader("Content-type", "application/json");
+            xmlhttp.send(dbParam);
+        }
+    </script>
+
+
+</body>
+
+</html>

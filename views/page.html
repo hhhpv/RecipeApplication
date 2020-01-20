@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Bootstrap 4 Example</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="d-flex justify-content-center" style="margin-top: 50px;">
+            <h1 style="font-family: fantasy; font-size: 50px;">The Recipe App</h1>
+        </div>
+        <div class="d-flex justify-content-center">
+            <p style="font-family: fantasy; font-size:small;">Cook something delicious.</p>
+        </div>
+    </div>
+    <div class="d-flex justify-content-center" style="padding-top: 150px;">
+        <div class="card" style="width:500px">
+            <div class="d-flex justify-content-center">
+                <h4 class="card-title">USER LOGIN</h4>
+            </div>
+            <form action="/signmein" method="POST">
+                <div class="card-body">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="" style="width: 125px;">Username</span>
+                        </div>
+                        <input type=" text" class="form-control" name="username" id="Name" aria-label="Name"
+                            aria-describedby="basic-addon2" style="width: 50px;" />
+                    </div>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="" style="width: 125px;">Password</span>
+                        </div>
+                        <input type="password" class="form-control" name="passcode" id="Passcode" aria-label="Name"
+                            aria-describedby="basic-addon2" style="width: 50px;" />
+                    </div>
+                    <div class="card-footer">
+                        <div class="d-flex justify-content-center">
+                            <button type="submit" class="btn btn-secondary">LOGIN</button>
+                        </div>
+                        <div style="text-align: right;float: right;font-size: small;margin-top: 15px;">
+                            <a href="/signup" style="color: black;">click here to register</a>
+                        </div>
+                    </div>
+            </form>
+        </div>
+    </div>
+    </div>
+</body>
+
+</html>

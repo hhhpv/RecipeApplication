@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Bootstrap 4 Example</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <style>
+        #message {
+            display: none;
+            background: #f1f1f1;
+            color: #000;
+            position: relative;
+            padding: 20px;
+            margin-top: 10px;
+        }
+
+        #message p {
+            padding: 10px 35px;
+            font-size: 18px;
+        }
+
+        .valid {
+            color: green;
+        }
+
+        .valid:before {
+            position: relative;
+            left: -35px;
+            content: "✔";
+        }
+
+        /* Add a red text color and an "x" when the requirements are wrong */
+        .invalid {
+            color: red;
+        }
+
+        .invalid:before {
+            position: relative;
+            left: -35px;
+            content: "✖";
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="d-flex justify-content-center" style="margin-top: 50px;">
+            <h1 style="font-family: fantasy; font-size: 50px;">The Recipe App</h1>
+        </div>
+        <div class="d-flex justify-content-center">
+            <p style="font-family: fantasy; font-size:small;">Cook something delicious.</p>
+        </div>
+    </div>
+    <div class="d-flex justify-content-center" style="padding-top: 150px;">
+        <div class="card" style="width:500px">
+            <div class="d-flex justify-content-center">
+                <h4 class="card-title">USER LOGIN</h4>
+            </div>
+            <!-- <form action="#" onsubmit="return registerUser(this)" method="POST"> -->
+            <div class="card-body">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="" style="width: 125px;">Username</span>
+                    </div>
+                    <input type=" text" class="form-control" name="username" id="Name" aria-label="Name"
+                        aria-describedby="basic-addon2" style="width: 50px;" />
+                </div>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="" style="width: 125px;">Password</span>
+                    </div>
+                    <input type="password" class="form-control" name="passcode" id="Passcode" aria-label="Name"
+                        pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" aria-describedby="basic-addon2"
+                        style="width: 50px;" />
+                </div>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="" style="width: 125px;font-size: small;">Re-Type
+                            Password</span>
+                    </div>
+                    <input type="password" class="form-control" name="passcode_verifyy" id="Re-passcode"
+                        aria-label="Name" aria-describedby="basic-addon2" style="width: 50px;" />
+                </div>
+                <div class="card-footer">
+                    <div class="d-flex justify-content-center">
+                        <button id="register" onclick="registerUser()" class="btn btn-secondary">REGISTER</button>
+                    </div>
+                </div>
+            </div>
+            <!-- </form> -->
+        </div>
+    </div>
+    <div id="message" style="margin-top: 50px;">
+        <h3>Password must contain the following:</h3>
+        <p id="letter" class="invalid">A <b>lowercase</b> letter</p>
+        <p id="capital" class="invalid">A <b>capital (uppercase)</b> letter</p>
+        <p id="number" class="invalid">A <b>number</b></p>
+        <p id="length" class="invalid">Minimum <b>8 characters</b></p>
+    </div>
+    <div id="id01" class="d-flex justify-content-center" style="margin-top: 50px;"></div>
+    <div id="id02" class="d-flex justify-content-center" style="margin-top: 50px;"></div>
+    <script>
+        var user_flag = false;
+        var pass_flag = false;
+        var re_pass_flag = false;
+        $(document).ready(
+            function () {
+                document.getElementById("register").disabled = true;
+
+                $('#Name').keyup(
+                    function () {
+                        var xmlhttp = new XMLHttpRequest();
+                        var url = "http://localhost:8080/uniname";
+                        obj = { "username": document.getElementById("Name").value };
+                        dbParam = JSON.stringify(obj);
+                        xmlhttp.onreadystatechange = function () {
+                            if (this.readyState === 4 && this.status === 200) {
+                                var myArr = JSON.parse(this.responseText);
+                                console.log(myArr)
+                                myFunction(myArr);
+                            }
+                        };
+                        if ((document.getElementById("Name").value).length < 6) {
+                            validateUsername();
+                        }
+                        else {
+                            xmlhttp.open("POST", url, true);
+                            xmlhttp.setRequestHeader("Content-type", "application/json");
+                            xmlhttp.send(dbParam);
+                        }
+                    });
+
+
+                var myInput = document.getElementById("Passcode");
+                var letter = document.getElementById("letter");
+                var capital = document.getElementById("capital");
+                var number = document.getElementById("number");
+                var length = document.getElementById("length");
+
+                // When the user clicks on the password field, show the message box
+                myInput.onfocus = function () {
+                    document.getElementById("message").style.display = "block";
+                }
+
+                // When the user clicks outside of the password field, hide the message box
+                myInput.onblur = function () {
+                    document.getElementById("message").style.display = "none";
+                }
+
+                // When the user starts to type something inside the password field
+
+                myInput.onkeyup = function () {
+                    // Validate lowercase letters
+                    var temp1 = false;
+                    var temp2 = false;
+                    var temp3 = false;
+                    var temp4 = false;
+                    var lowerCaseLetters = /[a-z]/g;
+                    if (myInput.value.match(lowerCaseLetters)) {
+                        letter.classList.remove("invalid");
+                        letter.classList.add("valid");
+                        temp1 = true;
+                    } else {
+                        letter.classList.remove("valid");
+                        letter.classList.add("invalid");
+                        temp1 = false;
+                    }
+
+                    // Validate capital letters
+                    var upperCaseLetters = /[A-Z]/g;
+                    if (myInput.value.match(upperCaseLetters)) {
+                        capital.classList.remove("invalid");
+                        capital.classList.add("valid");
+                        temp2 = true;
+                    } else {
+                        capital.classList.remove("valid");
+                        capital.classList.add("invalid");
+                        temp2 = false;
+                    }
+
+                    // Validate numbers
+                    var numbers = /[0-9]/g;
+                    if (myInput.value.match(numbers)) {
+                        number.classList.remove("invalid");
+                        number.classList.add("valid");
+                        temp3 = true;
+                    } else {
+                        number.classList.remove("valid");
+                        number.classList.add("invalid");
+                        temp3 = false;
+                    }
+
+                    // Validate length
+                    if (myInput.value.length >= 8) {
+                        length.classList.remove("invalid");
+                        length.classList.add("valid");
+                        temp4 = true;
+                    } else {
+                        length.classList.remove("valid");
+                        length.classList.add("invalid");
+                        temp4 = false;
+                    }
+                    if (temp1 == true && temp2 == true && temp3 == true && temp4 == true) {
+                        pass_flag = true;
+                        register();
+                    }
+                }
+
+
+                $('#Re-passcode').keyup(
+                    function () {
+                        if (document.getElementById('Re-passcode').value == document.getElementById('Passcode').value) {
+                            re_pass_flag = true;
+                            document.getElementById("id02").innerHTML = "";
+                            register();
+                        }
+                        else {
+                            out = "<p>Passwords do not match<\p>";
+                            console.log(document.getElementById('Re-passcode').value)
+                            console.log(document.getElementById('Passcode').value)
+                            document.getElementById("id02").innerHTML = out;
+                        }
+                    }
+                );
+
+            })
+        function myFunction(arr) {
+            var out = "";
+            var i;
+            //var resp = JSON.parse(arr);
+            if (arr.valid === "a valid") {
+                out = "<p>" + arr.name + " is " + arr.valid + " username.<\p>";
+                document.getElementById("id01").innerHTML = out;
+                document.getElementById("id01").innerHTML = "";
+                user_flag = true;
+                register();
+            }
+            else {
+                out = "<p>" + arr.name + " is alreasy in use.<\p>";
+                document.getElementById("id01").innerHTML = out;
+            }
+
+        }
+        function validateUsername() {
+            out = "Username should be minimum of 6 characters."
+            document.getElementById("id01").innerHTML = out;
+        }
+        function register() {
+            console.log(user_flag, pass_flag, re_pass_flag);
+            if (user_flag == true && pass_flag == true && re_pass_flag == true) {
+                document.getElementById("register").disabled = false;
+            }
+            else {
+                document.getElementById("register").disabled = true;
+            }
+        }
+        function registerUser() {
+            var xmlhttp = new XMLHttpRequest();
+            var url = "http://localhost:8080/user_register";
+            obj = { "username": document.getElementById("Name").value, "password": document.getElementById("Passcode").value };
+            dbParam = JSON.stringify(obj);
+            console.log(dbParam);
+            xmlhttp.onreadystatechange = function () {
+                if (this.readyState === 4 && this.status === 200) {
+                    var myArr = JSON.parse(this.responseText);
+                    console.log(myArr)
+                    if (myArr.result != "User Exists") {
+                        console.log(myArr.name, myArr.token, myArr.result)
+                        document.cookie = "recipeusername=" + myArr.name;
+                        document.cookie = "recipetoken=" + myArr.token;
+                        window.location.replace("http://localhost:8080/user_info");
+                    }
+                    else {
+                        console.log(myArr.result)
+                    }
+                }
+            }
+            xmlhttp.open("POST", url, true);
+            xmlhttp.setRequestHeader("Content-type", "application/json");
+            xmlhttp.send(dbParam);
+        }
+
+    </script>
+</body>
+
+</html>
