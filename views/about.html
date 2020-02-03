@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+
+<head>
+    <title>Bootstrap 4 Example</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <!-- <link rel="stylesheet" type="text/css" href="style.css"> -->
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+
+    <style>
+        #begin {
+            padding: 10%;
+            padding-left: 20%;
+            padding-bottom: 0%;
+        }
+
+        #locationSegment {
+            /* margin-top: 1.2em; */
+            padding: 10%;
+            padding-top: 5%;
+            padding-left: 20%;
+            padding-bottom: 0%;
+            word-wrap: break-word;
+            /* padding-right: 10%; */
+        }
+    </style>
+
+</head>
+
+<body onload="LoadPage()">
+    <div class="container-fluid">
+        <div class="d-flex justify-content-center" style="margin-top: 3.2em;">
+            <h1 style="font-family: fantasy; font-size: 3.2em;">The Recipe App</h1>
+        </div>
+        <div class="d-flex justify-content-center">
+            <p style="font-family: fantasy; font-size:small;">Cook something delicious.</p>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row d-flex justify-content-left">
+            <div class="d-flex justify-content-center" id="begin">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="DisplayName">Username</span>
+                </div>
+                <input type="text" class="form-control" name="username" id="Name" aria-label="Name"
+                    aria-describedby="basic-addon2" style="margin-left: 1.2em" disabled />
+            </div>
+            <div class="input-group" id="locationSegment">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="DisplayLocation">Location</span>
+                </div>
+                <input type="text" class="form-control" name="location" id="location" aria-label="Location"
+                    aria-describedby="basic-addon2" style="margin-left: 1.2em" disabled />
+            </div>
+            <div class="input-group" style="width: 50em;margin-left: 19.0em;margin-top: 2.5em;">
+                <div class="input-group-prepend">
+                    <span class="input-group-text-area" id="" style="width: 7.8em;">About You</span>
+                </div>
+                <textarea class="input" id="about" rows="5" cols="70" disabled>Some text here</textarea>
+            </div>
+        </div>
+        <div class="d-flex justify-content-bottom" style="float: right;margin-top: 1.2em;">
+            <a href="/">Go Back</a>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        function LoadPage() {
+            var username = RetrieveCookie("recipeusername");
+            var token = RetrieveCookie("recipetoken");
+            var xmlhttp = new XMLHttpRequest();
+            var url = "http://localhost:8080/load_details";
+            obj = { "username": username, "token": token };
+            dbParam = JSON.stringify(obj);
+            console.log(dbParam);
+            xmlhttp.onreadystatechange = function () {
+                if (this.readyState === 4 && this.status === 200) {
+                    var myArr = JSON.parse(this.responseText);
+                    console.log(myArr)
+                    if (myArr.result != "failure") {
+                        document.getElementById("Name").value = myArr.username;
+                        document.getElementById("location").value = myArr.location;
+                        document.getElementById("about").value = myArr.about;
+                    }
+                    else {
+                        console.log(myArr.result)
+                    }
+                }
+            }
+            xmlhttp.open("POST", url, true);
+            xmlhttp.setRequestHeader("Content-type", "application/json");
+            xmlhttp.send(dbParam);
+        }
+        function RetrieveCookie(name) {
+            var value = "; " + document.cookie;
+            var parts = value.split("; " + name + "=");
+            if (parts.length == 2) {
+                return parts.pop().split(";").shift();
+            }
+        }
+
+    </script>
+</body>

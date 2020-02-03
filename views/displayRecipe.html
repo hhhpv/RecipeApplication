@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Bootstrap 4 Example</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+
+    <style>
+        .column-wise {
+            display: flex;
+            flex-flow: column wrap;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .row-wise {
+            display: flex;
+            flex-flow: row nowrap;
+            margin-top: 4em;
+        }
+
+        h4 {
+            margin-top: 1em;
+        }
+
+        p.recipe_steps {
+            margin-top: 3em;
+        }
+
+        .seemore {
+            background-color: rgb(64, 93, 223);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-family: sans-serif;
+            border-color: rgb(64, 93, 223);
+        }
+
+        #back {
+            position: fixed;
+            bottom: 2em;
+        }
+
+        h4 {
+            justify-content: left;
+            align-items: flex-start;
+            margin-top: 1em;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row-wise">
+            <div class="column-wise">
+                <img src="/images/profile_pic_default.png" />
+                <h4>Created By: {{.Name}}</h4>
+                <h5>Created At: {{.Date}}</h5>
+            </div>
+            <div class="column-wise" style="margin-left: 18.0em;">
+                <div class="container-fluid">
+                    <div class="d-flex justify-content-center">
+                        <h1 style="font-family: fantasy; font-size: 3.2em;">The Recipe App</h1>
+                    </div>
+                    <div class="d-flex justify-content-center">
+                        <p style="font-family: fantasy; font-size:small;">Cook something delicious.</p>
+                    </div>
+                </div>
+                <h3>{{.RecipeName}}</h3>
+                <h4>{{.RecipeDescription}}</h4>
+                <p class="recipe_steps">{{.RecipeSteps}}</p>
+                <div id="back">
+                    <button class="seemore">Browse More</button>
+                </div>
+            </div>
+            <div class="column-wise" style="margin-left: 15.2em;vertical-align:middle;margin-top: 10em;">
+                <img src="/images/chefs_hat.png" />
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        $('#back').on('click', function () {
+            window.location.replace("/");
+        });
+    </script>
+</body>
+
+</html>

@@ -18,14 +18,21 @@ import (
 func main() {
 
 	r := mux.NewRouter()
+	r.PathPrefix("/images/").Handler(http.StripPrefix("/images/", http.FileServer(http.Dir("images/"))))
 	Handlers.ViewHandler(r)
 	Handlers.LoginHandler(r)
 	Handlers.SignUpHandler(r)
 	Handlers.UserInfoHandler(r)
 	Handlers.SignMeInHandler(r)
+	Handlers.LoadUserDetailsHandler(r)
 	Handlers.UniqueUserHandler(r)
 	Handlers.UserRegisterHandler(r)
 	Handlers.UserInfoUpdateHandler(r)
+	Handlers.AddRecipeHandler(r)
+	Handlers.AboutViewHandler(r)
+	Handlers.NewRecipeHandler(r)
+	Handlers.RetrieveRecipeHandler(r)
+	Handlers.DisplayRecipeHandler(r)
 
 	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017")
 

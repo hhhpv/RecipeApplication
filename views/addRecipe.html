@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Bootstrap 4 Example</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+
+    <style>
+        .layout {
+            display: flex;
+            flex-flow: column wrap;
+            margin-top: auto;
+            margin-bottom: auto;
+            justify-content: center;
+            align-items: center;
+
+        }
+
+        .feedback {
+            background-color: rgb(64, 93, 223);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-family: sans-serif;
+            border-color: rgb(64, 93, 223);
+        }
+
+        .feedback2 {
+            background-color: rgb(141, 3, 3);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-family: sans-serif;
+            border-color: rgb(141, 3, 3);
+        }
+    </style>
+</head>
+
+
+<body>
+    <div class="container-fluid">
+        <div class="d-flex justify-content-center" style="margin-top: 0.2em;">
+            <h1 style="font-family: fantasy; font-size: 50px;">The Recipe App</h1>
+        </div>
+        <div class="d-flex justify-content-center">
+            <p style="font-family: fantasy; font-size:small;">Cook something delicious.</p>
+        </div>
+    </div>
+    <div class="container-fluid layout" style="margin-top: 2.4em;">
+        <div class="layout">
+
+
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span style="font-family: sans-serif;">RECIPE NAME</span>
+                </div>
+            </div>
+            <input type="text" id="recipeName" />
+            <div class="input-group" style="margin-top: 2.4em;">
+                <div class="input-group-prepend">
+                    <span style="font-family: sans-serif;">DESCRIPTION</span>
+                </div>
+            </div>
+            <input type="text" id="description" />
+            <div class="input-group" style="margin-top: 2.4em;">
+                <div class="input-group-prepend">
+                    <span style="font-family: sans-serif;">STEPS</span>
+                </div>
+            </div>
+            <textarea class="input d-flex justify-content-center" id="about" rows="10" cols="70"
+                placeholder="Enter the steps to create your recipe here"></textarea>
+        </div>
+        <div style="margin-top: 1.2em; padding: 5%;">
+            <button class="feedback" id="publish">Publish</button>
+            <button class="feedback2" id="cancel">Cancel</button>
+        </div>
+    </div>
+    <script type="text/javascript">
+        function RetrieveCookie(name) {
+            var value = "; " + document.cookie;
+            var parts = value.split("; " + name + "=");
+            if (parts.length == 2) {
+                return parts.pop().split(";").shift();
+            }
+        }
+        $("#cancel").on('click', function () {
+            window.location.replace("/");
+        });
+        $("#publish").on('click', function () {
+            var recipeName = document.getElementById("recipeName").value;
+            var recipeDescription = document.getElementById("description").value;
+            var recipeSteps = document.getElementById("about").value;
+            var token = RetrieveCookie("recipetoken");
+            var username = RetrieveCookie("recipeusername");
+            console.log(recipeName);
+            console.log(recipeDescription);
+            console.log(recipeSteps);
+            var xmlhttp = new XMLHttpRequest();
+            var url = "http://localhost:8080/new_recipe";
+            obj = { "username": username, "token": token, "recipename": recipeName, "recipedescription": recipeDescription, "recipesteps": recipeSteps };
+            dbParam = JSON.stringify(obj);
+            xmlhttp.onreadystatechange = function () {
+                if (this.readyState === 4 && this.status === 200) {
+                    var myArr = JSON.parse(this.responseText);
+                    console.log(myArr)
+                    if (myArr.result != "failure") {
+                        console.log(myArr);
+                        window.location.replace("/");
+                    }
+                    else {
+                        console.log(myArr.result)
+                    }
+                }
+            }
+            xmlhttp.open("POST", url, true);
+            xmlhttp.setRequestHeader("Content-type", "application/json");
+            xmlhttp.send(dbParam);
+        });
+    </script>
+</body>
+
+</html>

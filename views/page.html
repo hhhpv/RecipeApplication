@@ -9,6 +9,93 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <style>
+        #snackbar {
+            visibility: hidden;
+            /* Hidden by default. Visible on click */
+            min-width: 250px;
+            /* Set a default minimum width */
+            margin-left: -125px;
+            /* Divide value of min-width by 2 */
+            background-color: #333;
+            /* Black background color */
+            color: #fff;
+            /* White text color */
+            text-align: center;
+            /* Centered text */
+            border-radius: 2px;
+            /* Rounded borders */
+            padding: 16px;
+            /* Padding */
+            position: fixed;
+            /* Sit on top of the screen */
+            z-index: 1;
+            /* Add a z-index if needed */
+            left: 50%;
+            /* Center the snackbar */
+            bottom: 30px;
+            /* 30px from the bottom */
+        }
+
+        /* Show the snackbar when clicking on a button (class added with JavaScript) */
+        #snackbar.show {
+            visibility: visible;
+            /* Show the snackbar */
+            /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
+  However, delay the fade out process for 2.5 seconds */
+            -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+
+        /* Animations to fade the snackbar in and out */
+        @-webkit-keyframes fadein {
+            from {
+                bottom: 0;
+                opacity: 0;
+            }
+
+            to {
+                bottom: 30px;
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadein {
+            from {
+                bottom: 0;
+                opacity: 0;
+            }
+
+            to {
+                bottom: 30px;
+                opacity: 1;
+            }
+        }
+
+        @-webkit-keyframes fadeout {
+            from {
+                bottom: 30px;
+                opacity: 1;
+            }
+
+            to {
+                bottom: 0;
+                opacity: 0;
+            }
+        }
+
+        @keyframes fadeout {
+            from {
+                bottom: 30px;
+                opacity: 1;
+            }
+
+            to {
+                bottom: 0;
+                opacity: 0;
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -25,34 +112,75 @@
             <div class="d-flex justify-content-center">
                 <h4 class="card-title">USER LOGIN</h4>
             </div>
-            <form action="/signmein" method="POST">
-                <div class="card-body">
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text" id="" style="width: 125px;">Username</span>
-                        </div>
-                        <input type=" text" class="form-control" name="username" id="Name" aria-label="Name"
-                            aria-describedby="basic-addon2" style="width: 50px;" />
+            <!-- <form action="/signmein" method="POST"> -->
+            <div class="card-body">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="" style="width: 125px;">Username</span>
                     </div>
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text" id="" style="width: 125px;">Password</span>
-                        </div>
-                        <input type="password" class="form-control" name="passcode" id="Passcode" aria-label="Name"
-                            aria-describedby="basic-addon2" style="width: 50px;" />
+                    <input type=" text" class="form-control" name="username" id="Name" aria-label="Name"
+                        aria-describedby="basic-addon2" style="width: 50px;" />
+                </div>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="" style="width: 125px;">Password</span>
                     </div>
-                    <div class="card-footer">
-                        <div class="d-flex justify-content-center">
-                            <button type="submit" class="btn btn-secondary">LOGIN</button>
-                        </div>
-                        <div style="text-align: right;float: right;font-size: small;margin-top: 15px;">
-                            <a href="/signup" style="color: black;">click here to register</a>
-                        </div>
+                    <input type="password" class="form-control" name="passcode" id="Passcode" aria-label="Name"
+                        aria-describedby="basic-addon2" style="width: 50px;" />
+                </div>
+                <div class="card-footer">
+                    <div class="d-flex justify-content-center">
+                        <button onclick="login()" class="btn btn-secondary">LOGIN</button>
                     </div>
-            </form>
+                    <div style="text-align: right;float: right;font-size: small;margin-top: 15px;">
+                        <a href="/signup" style="color: black;">click here to register</a>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-center" id="snackbar">Invalid Credentials</div>
+                <!-- </form> -->
+            </div>
         </div>
     </div>
-    </div>
 </body>
+<script type="text/javascript">
+    function login() {
+        var xmlhttp = new XMLHttpRequest();
+        var url = "http://localhost:8080/signmein";
+        obj = { "username": document.getElementById("Name").value, "password": document.getElementById("Passcode").value };
+        dbParam = JSON.stringify(obj);
+        console.log(dbParam);
+        xmlhttp.onreadystatechange = function () {
+            if (this.readyState === 4 && this.status === 200) {
+                console.log(this.responseText)
+                var myArr = JSON.parse(this.responseText);
+                console.log(myArr)
+                if (myArr.result != "failure") {
+                    console.log(myArr.name, myArr.token, myArr.result)
+                    document.cookie = "recipeusername=" + myArr.name;
+                    document.cookie = "recipetoken=" + myArr.token;
+
+                    window.location.replace("/");
+                }
+                else {
+                    myFunction();
+                    console.log(myArr.result)
+                }
+            }
+        }
+        xmlhttp.open("POST", url, true);
+        xmlhttp.setRequestHeader("Content-type", "application/json");
+        xmlhttp.send(dbParam);
+    }
+    function myFunction() {
+        // Get the snackbar DIV
+        var x = document.getElementById("snackbar");
+
+        // Add the "show" class to DIV
+        x.className = "show";
+
+        // After 3 seconds, remove the show class from DIV
+        setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
+    }
+</script>
 
 </html>

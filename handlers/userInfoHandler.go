@@ -9,7 +9,7 @@ import (
 )
 
 func UserInfoHandler(r *mux.Router) {
-	r.HandleFunc("/user_info", UserInfoHandlerFunc)
+	r.HandleFunc("/user_info", CheckSecurity(UserInfoHandlerFunc))
 }
 
 func UserInfoHandlerFunc(w http.ResponseWriter, r *http.Request) {

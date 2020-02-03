@@ -2,10 +2,10 @@ package handlers
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
-	"text/template"
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
@@ -20,6 +20,12 @@ import (
 type Signin struct {
 	Username string
 	Password string
+}
+
+type SignInResponse struct {
+	Name   string `json:"name"`
+	Token  string `json:"token"`
+	Result string `json:"result"`
 }
 
 const (
@@ -46,12 +52,17 @@ func SignMeInHandlerFunc(w http.ResponseWriter, r *http.Request) {
 	// u := r.Form.Get("username")
 
 	collection := Dbase.Client.Database("recipe").Collection("users")
-	err := r.ParseForm()
-	if err != nil {
-		fmt.Println("cannot parse")
+	w.Header().Set("Content-Type", "application/json")
+	var regFields RegFields
+	regerr := json.NewDecoder(r.Body).Decode(&regFields)
+	if regerr != nil {
+		fmt.Println(r.Body)
+		fmt.Println(regerr)
+		http.Error(w, regerr.Error(), http.StatusBadRequest)
+		return
 	}
-	name := r.PostFormValue("username")
-	password := r.PostFormValue("passcode")
+	name := regFields.Username
+	password := regFields.Password
 	//passwordLength := len(password)
 	fmt.Println("username is ", name)
 	fmt.Println("password is ", password)
@@ -63,7 +74,7 @@ func SignMeInHandlerFunc(w http.ResponseWriter, r *http.Request) {
 
 	var result Signin
 	fmt.Println(filter)
-	err = collection.FindOne(context.TODO(), filter).Decode(&result)
+	err := collection.FindOne(context.TODO(), filter).Decode(&result)
 	if err != nil {
 		fmt.Println(err)
 		fmt.Println("there is an error")
@@ -72,20 +83,34 @@ func SignMeInHandlerFunc(w http.ResponseWriter, r *http.Request) {
 	if verifyUser {
 		fmt.Println("Valid credentials")
 		fmt.Println(result)
-		createdToken, err := GenerateToken([]byte(MySigningKey), name)
-		if err != nil {
+		createdToken, terr := GenerateToken([]byte(MySigningKey), name)
+		if terr != nil {
 			fmt.Println("Creating token failed")
 		}
-		ParseToken(createdToken, MySigningKey)
+		if ParseToken(createdToken, MySigningKey) {
+			resp := SignInResponse{
+				Name: name, Token: createdToken, Result: "success",
+			}
+			json.NewEncoder(w).Encode(resp)
+		} else {
+			resp := SignInResponse{
+				Name: name, Token: "", Result: "failure",
+			}
+			json.NewEncoder(w).Encode(resp)
+		}
 	} else {
 		fmt.Println("Invalid credentials")
 		fmt.Println(result)
+		resp := SignInResponse{
+			Name: name, Token: "", Result: "failure",
+		}
+		json.NewEncoder(w).Encode(resp)
 	}
 	defer r.Body.Close()
-	title := r.URL.Path[len(""):]
-	p := loadPage(title)
-	t, _ := template.ParseFiles("./views/HomePage.html")
-	t.Execute(w, p)
+	// title := r.URL.Path[len(""):]
+	// p := loadPage(title)
+	// t, _ := template.ParseFiles("./views/HomePage.html")
+	// t.Execute(w, p)
 }
 
 func hashAndSalt(pwd []byte, cost int) string {

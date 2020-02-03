@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"text/template"
@@ -20,10 +21,11 @@ func loadPage(title string) *Page {
 }
 
 func ViewHandler(r *mux.Router) {
-	r.HandleFunc("/", ViewHandlerFunc)
+	r.HandleFunc("/", CheckSecurity(ViewHandlerFunc))
 }
 
 func ViewHandlerFunc(w http.ResponseWriter, r *http.Request) {
+	fmt.Println(r.Cookie)
 	title := r.URL.Path[len(""):]
 	p := loadPage(title)
 	t, _ := template.ParseFiles("./views/HomePage.html")

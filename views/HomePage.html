@@ -12,15 +12,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
     <script type="text/javascript">
-        function addCols(num) {
-            for (var i = 1; i <= num; i++) {
-                var myCol = $('<div class="col-sm-6 col-md-6 pb-2"></div>');
-                var myPanel = $('<div class="card" style="width: 25rem;margin-top:20px;margin-left:75px"><img class="card-img-top" src="defaultMy" alt="Card image cap"><div class="card-body"><h5 class="card-title">Card title</h5><p class="card-text">Some quick example text to build on the card title and make up the bulk of the card\'s content.</p><a href="#" class="btn btn-primary">Go somewhere</a></div></div>');
-                myPanel.appendTo(myCol);
-                myCol.appendTo('#contentPanel');
-            }
-        };
-        addCols(4);
+
     </script>
     <style>
         .overlay {
@@ -65,6 +57,21 @@
             font-size: 60px;
         }
 
+        .feedback {
+            background-color: rgb(64, 93, 223);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-family: sans-serif;
+            border-color: rgb(64, 93, 223);
+        }
+
+        #mybutton {
+            position: fixed;
+            bottom: 4px;
+            right: 10px;
+        }
+
         @media screen and (max-height: 450px) {
             .overlay {
                 overflow-y: auto;
@@ -84,17 +91,17 @@
 </head>
 
 
-<body onload="addCols(4);">
+<body onload="getRecipes();" data-spy="scroll" data-target="#myScrollspy" data-offset="15">
     <div id="myNav" class="overlay">
         <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
         <div class="overlay-content">
             <a href="#">About</a>
             <a href="/">Home</a>
-            <a href="#">Account</a>
-            <!-- <a href="/login">Login</a> -->
+            <a href="/user_profile">Account</a>
+            <a href="/login" onclick="logout()">Logout</a>
         </div>
     </div>
-    <span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776;</span>
+    <span style="font-size:30px;cursor:pointer;margin-left: 0.2em;" onclick="openNav()">&#9776;</span>
     <script>
         function openNav() {
             document.getElementById("myNav").style.height = "100%";
@@ -105,7 +112,7 @@
         }
     </script>
     <div class="container-fluid">
-        <div class="d-flex justify-content-center" style="margin-top: 50px;">
+        <div class="d-flex justify-content-center" style="margin-top: 0.2em;">
             <h1 style="font-family: fantasy; font-size: 50px;">The Recipe App</h1>
         </div>
         <div class="d-flex justify-content-center">
@@ -116,6 +123,83 @@
         <div class="row" id="contentPanel">
         </div>
     </div>
+    <div id="mybutton">
+        <button class="feedback">Share Recipe</button>
+    </div>
+
+
+    <script type="text/javascript">
+        function RetrieveCookie(name) {
+            var value = "; " + document.cookie;
+            var parts = value.split("; " + name + "=");
+            if (parts.length == 2) {
+                return parts.pop().split(";").shift();
+            }
+        }
+        function GoHome() {
+            var xmlhttp = new XMLHttpRequest();
+            var url = "http://localhost:8080/";
+            var name = RetrieveCookie("recipeusername");
+            var token = RetrieveCookie("recipetoken");
+            obj = { "username": name, "token": token };
+            dbParam = JSON.stringify(obj);
+            xmlhttp.onreadystatechange = function () {
+                if (this.readyState === 4 && this.status === 200) {
+
+                }
+            }
+            xmlhttp.open("POST", url, true);
+            xmlhttp.setRequestHeader("Content-type", "application/json");
+            xmlhttp.send(dbParam);
+        }
+        function logout() {
+            document.cookie = "recipeusername=" + "";
+            document.cookie = "recipetoken=" + "";
+        }
+        $("#mybutton").on('click', function () {
+            window.location.replace("/add_recipe");
+        });
+        function getRecipes() {
+            var xmlhttp = new XMLHttpRequest();
+            var url = "http://localhost:8080/get_recipes";
+            var name = RetrieveCookie("recipeusername");
+            var token = RetrieveCookie("recipetoken");
+            obj = { "username": name, "token": token };
+            dbParam = JSON.stringify(obj);
+            xmlhttp.onreadystatechange = function () {
+                if (this.readyState === 4 && this.status === 200) {
+                    var myArr = this.response;
+                    addCols(myArr);
+                } else {
+                    addColsDefault(1);
+                }
+            }
+            xmlhttp.open("POST", url, true);
+            xmlhttp.setRequestHeader("Content-type", "application/json");
+            xmlhttp.send(dbParam);
+        }
+        function addColsDefault(num) {
+            for (var i = 1; i < num; i++) {
+                var myCol = $('<div class="col-sm-6 col-md-6 pb-2"></div>');
+                var myPanel = $('<div class=\"card\" style=\"width: 25em;margin-top:1.25em;margin-left:4.68em\"><img class=\"card-img-top\" src=\"./images/foodWallpaper.png\" alt=\"Card image cap\"><div class=\"card-body\"><h5 class=\"card-title\">Recipe Name</h5><p class=\"card-text\">Seems like no one has shared their recipe. You can start by sharing yours!</p><a href=\"#\" class=\"btn btn-primary\">Go somewhere</a></div></div>');
+                myPanel.appendTo(myCol);
+                myCol.appendTo('#contentPanel');
+            }
+        };
+
+        function addCols(myArr) {
+            var obj = JSON.parse(myArr);
+            var arr = obj["recipes"];
+            for (var i = 0; i < arr.length; i++) {
+                var myCol = $('<div class="col-sm-6 col-md-6 pb-2"></div>');
+                var cnt = '<div class=\"card\" style=\"width: 25em;margin-top:1.25em;margin-left:4.68em\"><img class=\"card-img-top\" src=\"./images/foodWallpaper.png\" alt=\"Card image cap\"><div class=\"card-body\"><h5 class=\"card-title\">' + arr[i].recipename + '</h5><p class=\"card-text\">' + arr[i].recipedescription + '</p><a href="\\display_recipe\\'+arr[i].uid+'" class=\"btn btn-primary\">See More</a></div></div>';
+                var myPanel = $(cnt);
+                myPanel.appendTo(myCol);
+                myCol.appendTo('#contentPanel');
+            }
+        };
+
+    </script>
 </body>
 
 </html>
