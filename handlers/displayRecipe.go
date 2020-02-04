@@ -34,12 +34,13 @@ type PageDisplayRecipe struct {
 	RecipeName        string
 	RecipeDescription string
 	RecipeSteps       string
+	UID               string
 }
 
-func loadPageDisplayRecipe(title string, user string, recipename string, recipedesrciption string, recipesteps string, createdat string) *PageDisplayRecipe {
+func loadPageDisplayRecipe(title string, user string, recipename string, recipedesrciption string, recipesteps string, createdat string, uid string) *PageDisplayRecipe {
 	filename := title + ".txt"
 	body, _ := ioutil.ReadFile(filename)
-	return &PageDisplayRecipe{Title: title, Body: body, Name: user, RecipeDescription: recipedesrciption, Date: createdat, RecipeName: recipename, RecipeSteps: recipesteps}
+	return &PageDisplayRecipe{Title: title, Body: body, Name: user, RecipeDescription: recipedesrciption, Date: createdat, RecipeName: recipename, RecipeSteps: recipesteps, UID: uid}
 }
 func DisplayRecipeHandler(r *mux.Router) {
 	r.HandleFunc("/display_recipe/{uid}", CheckSecurity(DisplayRecipeHandlerFunc))
@@ -57,7 +58,7 @@ func DisplayRecipeHandlerFunc(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Println(result.RecipeSteps)
 	title := r.URL.Path[len(""):]
-	p := loadPageDisplayRecipe(title, result.Name, result.RecipeName, result.RecipeDescription, result.RecipeSteps, result.Date)
+	p := loadPageDisplayRecipe(title, result.Name, result.RecipeName, result.RecipeDescription, result.RecipeSteps, result.Date, uid)
 	t, _ := template.ParseFiles("./views/displayRecipe.html")
 	t.Execute(w, p)
 }

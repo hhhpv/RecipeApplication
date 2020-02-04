@@ -51,17 +51,31 @@
             align-items: flex-start;
             margin-top: 1em;
         }
+
+        .delete_recipe {
+            background-color: rgb(141, 3, 3);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 2px;
+            text-align: center;
+            font-family: sans-serif;
+            border-color: rgb(141, 3, 3);
+        }
     </style>
 
 </head>
 
-<body>
+<body onload="onLoad()">
     <div class="container-fluid">
         <div class="row-wise">
             <div class="column-wise">
                 <img src="/images/profile_pic_default.png" />
-                <h4>Created By: {{.Name}}</h4>
+                <h4 id="name"></h4>
+                <!-- Created By: {{.Name}} -->
                 <h5>Created At: {{.Date}}</h5>
+                <div id="delete" style="visibility: hidden;">
+                    <button class="delete_recipe">Delete Recipe</button>
+                </div>
             </div>
             <div class="column-wise" style="margin-left: 18.0em;">
                 <div class="container-fluid">
@@ -87,6 +101,47 @@
     <script type="text/javascript">
         $('#back').on('click', function () {
             window.location.replace("/");
+        });
+        function RetrieveCookie(name) {
+            var value = "; " + document.cookie;
+            var parts = value.split("; " + name + "=");
+            if (parts.length == 2) {
+                return parts.pop().split(";").shift();
+            }
+        }
+        function onLoad() {
+            var name = RetrieveCookie("recipeusername");
+            var token = RetrieveCookie("recipetoken");
+            var got = "{{.Name}}";
+            if (name === got) {
+                document.getElementById("name").innerHTML = "Created By: " + "You";
+                document.getElementById("delete").style.visibility = "visible";
+            }
+            else {
+                document.getElementById("name").innerHTML = "Created By: " + got;
+            }
+        }
+        $("#delete").on('click', function () {
+            var xmlhttp = new XMLHttpRequest();
+            var url = "http://localhost:8080/delete_recipe";
+            var name = RetrieveCookie("recipeusername");
+            var token = RetrieveCookie("recipetoken");
+            var recipeuid = "{{.UID}}";
+            obj = { "username": name, "token": token, "uid": recipeuid };
+            dbParam = JSON.stringify(obj);
+            xmlhttp.onreadystatechange = function () {
+                if (this.readyState === 4 && this.status === 200) {
+                    var myArr = this.response;
+                    if (myArr.status != "failure") {
+                        window.location.replace("/");
+                    } else {
+                        console.log(myArr.status);
+                    }
+                }
+            }
+            xmlhttp.open("POST", url, true);
+            xmlhttp.setRequestHeader("Content-type", "application/json");
+            xmlhttp.send(dbParam);
         });
     </script>
 </body>
