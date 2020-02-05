@@ -38,8 +38,6 @@ func UserRegisterHandlerFunc(w http.ResponseWriter, r *http.Request) {
 
 	regerr := json.NewDecoder(r.Body).Decode(&regFields)
 	if regerr != nil {
-		fmt.Println(r.Body)
-		fmt.Println(regerr)
 		http.Error(w, regerr.Error(), http.StatusBadRequest)
 		return
 	}
@@ -62,8 +60,6 @@ func UserRegisterHandlerFunc(w http.ResponseWriter, r *http.Request) {
 
 		name := regFields.Username
 		password := regFields.Password
-		fmt.Println("New User", name)
-		fmt.Println("New Password", password)
 
 		newUserHashedPassword := hashAndSalt([]byte(password), len(password))
 		newUser := Signin{name, newUserHashedPassword}
@@ -77,7 +73,6 @@ func UserRegisterHandlerFunc(w http.ResponseWriter, r *http.Request) {
 			}
 			json.NewEncoder(w).Encode(registerStatus)
 		} else {
-			fmt.Println("New User Created! ", insertResult.InsertedID)
 			registerStatus := RegisterUser{
 				Name:   name,
 				Token:  createdToken,
@@ -86,7 +81,6 @@ func UserRegisterHandlerFunc(w http.ResponseWriter, r *http.Request) {
 			json.NewEncoder(w).Encode(registerStatus)
 		}
 	} else {
-		fmt.Println("User Already Registered!")
 		res := UserExists{
 			Result: "User Exists",
 		}

@@ -37,20 +37,6 @@ func SignMeInHandler(r *mux.Router) {
 }
 
 func SignMeInHandlerFunc(w http.ResponseWriter, r *http.Request) {
-
-	//For JSON request processing
-	// var b signin
-	// decoder := json.NewDecoder(r.Body)
-	// err := decoder.Decode(&b)
-	// if err != nil {
-	// 	fmt.Println("error")
-	// 	fmt.Println(err)
-	// }
-	// fmt.Println((b))
-	// u := r.Form.Get("username")
-	//body, _ := ioutil.ReadAll(r.Body)
-	// u := r.Form.Get("username")
-
 	collection := Dbase.Client.Database("recipe").Collection("users")
 	w.Header().Set("Content-Type", "application/json")
 	var regFields RegFields
@@ -63,26 +49,17 @@ func SignMeInHandlerFunc(w http.ResponseWriter, r *http.Request) {
 	}
 	name := regFields.Username
 	password := regFields.Password
-	//passwordLength := len(password)
-	fmt.Println("username is ", name)
-	fmt.Println("password is ", password)
-	//hashedPassword := hashAndSalt([]byte(password), passwordLength)
 
-	// filter := bson.M{"username": name, "password": hashedPassword}
 	filter := bson.D{{"username", name}}
-	// bson.D{"username", name, "password", hashedPassword}
 
 	var result Signin
-	fmt.Println(filter)
+
 	err := collection.FindOne(context.TODO(), filter).Decode(&result)
 	if err != nil {
 		fmt.Println(err)
-		fmt.Println("there is an error")
 	}
 	verifyUser := comparePasswords(result.Password, []byte(password))
 	if verifyUser {
-		fmt.Println("Valid credentials")
-		fmt.Println(result)
 		createdToken, terr := GenerateToken([]byte(MySigningKey), name)
 		if terr != nil {
 			fmt.Println("Creating token failed")
@@ -100,17 +77,12 @@ func SignMeInHandlerFunc(w http.ResponseWriter, r *http.Request) {
 		}
 	} else {
 		fmt.Println("Invalid credentials")
-		fmt.Println(result)
 		resp := SignInResponse{
 			Name: name, Token: "", Result: "failure",
 		}
 		json.NewEncoder(w).Encode(resp)
 	}
 	defer r.Body.Close()
-	// title := r.URL.Path[len(""):]
-	// p := loadPage(title)
-	// t, _ := template.ParseFiles("./views/HomePage.html")
-	// t.Execute(w, p)
 }
 
 func hashAndSalt(pwd []byte, cost int) string {
@@ -121,8 +93,6 @@ func hashAndSalt(pwd []byte, cost int) string {
 	return string(hash)
 }
 func comparePasswords(hashedPwd string, plainPwd []byte) bool {
-	// Since we'll be getting the hashed password from the DB it
-	// will be a string so we'll need to convert it to a byte slice
 	byteHash := []byte(hashedPwd)
 	err := bcrypt.CompareHashAndPassword(byteHash, plainPwd)
 	if err != nil {
@@ -149,13 +119,9 @@ func ParseToken(myToken string, myKey string) bool {
 	token, err := jwt.Parse(myToken, func(token *jwt.Token) (interface{}, error) {
 		return []byte(myKey), nil
 	})
-
 	if err == nil && token.Valid {
-		fmt.Println("Your token is valid.  I like your style.")
-		fmt.Println(token)
 		return true
 	} else {
-		fmt.Println("This token is terrible!  I cannot accept this.")
 		return false
 	}
 }

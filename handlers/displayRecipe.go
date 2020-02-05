@@ -56,7 +56,6 @@ func DisplayRecipeHandlerFunc(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(result.RecipeSteps)
 	title := r.URL.Path[len(""):]
 	p := loadPageDisplayRecipe(title, result.Name, result.RecipeName, result.RecipeDescription, result.RecipeSteps, result.Date, uid)
 	t, _ := template.ParseFiles("./views/displayRecipe.html")

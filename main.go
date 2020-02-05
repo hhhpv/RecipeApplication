@@ -34,6 +34,7 @@ func main() {
 	Handlers.RetrieveRecipeHandler(r)
 	Handlers.DisplayRecipeHandler(r)
 	Handlers.DeleteRecipeHandler(r)
+	Handlers.AboutAppHandler(r)
 
 	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017")
 

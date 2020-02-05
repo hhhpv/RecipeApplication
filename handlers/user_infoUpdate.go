@@ -41,14 +41,11 @@ func UserInfoUpdateHandler(r *mux.Router) {
 }
 
 func UserInfoUpdateHandlerFunc(w http.ResponseWriter, r *http.Request) {
-	// var res RegisterUser
 	var ret ReqUserUpdate
 	collection := Dbase.Client.Database("recipe").Collection("user_info")
 	w.Header().Set("Content-Type", "application/json")
 	regerr := json.NewDecoder(r.Body).Decode(&ret)
 	if regerr != nil {
-		fmt.Println(r.Body)
-		fmt.Println(regerr)
 		http.Error(w, regerr.Error(), http.StatusBadRequest)
 		return
 	}
@@ -90,8 +87,6 @@ func CheckSecurity(next http.HandlerFunc) http.HandlerFunc {
 		token, err := r.Cookie("recipetoken")
 		if err != nil {
 			w.Header().Set("Content-Type", "text/html")
-			fmt.Println("First If")
-			fmt.Println(err)
 			title := r.URL.Path[len(""):]
 			p := loadPage(title)
 			t, _ := template.ParseFiles("./views/page.html")
@@ -99,11 +94,9 @@ func CheckSecurity(next http.HandlerFunc) http.HandlerFunc {
 		} else if ParseToken(token.Value, MySigningKey) {
 			w.Header().Set("Content-Type", "text/html")
 			next(w, r)
-			fmt.Println("Second if")
 		} else {
 			w.Header().Set("Content-Type", "text/html")
 			title := r.URL.Path[len(""):]
-			fmt.Println("third")
 			p := loadPage(title)
 			t, _ := template.ParseFiles("./views/page.html")
 			t.Execute(w, p)
