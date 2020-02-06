@@ -63,7 +63,7 @@ func UserRegisterHandlerFunc(w http.ResponseWriter, r *http.Request) {
 
 		newUserHashedPassword := hashAndSalt([]byte(password), len(password))
 		newUser := Signin{name, newUserHashedPassword}
-		insertResult, insertErr := collection.InsertOne(context.TODO(), newUser)
+		_, insertErr := collection.InsertOne(context.TODO(), newUser)
 		if insertErr != nil {
 			log.Fatal(insertErr)
 			registerStatus := RegisterUser{
