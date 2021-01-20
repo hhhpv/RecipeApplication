@@ -137,7 +137,7 @@
         result: success/failure<string>
       }
   ```
-       * **Load User Details:**
+     * **Load User Details:**
   ```
   Request Fields:
       {
