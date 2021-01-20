@@ -162,3 +162,6 @@
         valid:valid/invalid username<string>
       }
       
+## Note: There is more to the working of the application apart from the above mentioned APIs. Check the code for understanding the implementation.
+
+# Update: Link to the demo of the application coming soon!!!!
