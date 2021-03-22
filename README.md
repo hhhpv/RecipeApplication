@@ -1,8 +1,10 @@
 # RecipeApplication
-(AdigeMane) Golang Project
+(AdigeMane) Golang Project                                                                                                    
 
 #### A fullstack application which serves as a social media for sharing recipes.
 *Tech Stack: Golang (Go), HTML5/CSS, Bootstrap4, MongoDb*
+
+## [Click Here For Demo](https://bit.ly/AdigeMane)
 
 ![Home Page](/Screenshots/home_screen.jpg)
 
@@ -163,5 +165,3 @@
       }
       
 ## Note: There is more to the working of the application apart from the above mentioned APIs. Check the code for understanding the implementation.
-
-# Update: Link to the demo of the application coming soon!!!!
